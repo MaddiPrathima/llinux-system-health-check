@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Linux System Health Check Script
+
+echo "===================================="
+echo "   Linux System Health Check Report"
+echo "===================================="
+echo ""
+
+# CPU Usage
+echo "CPU Usage:"
+CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1}')
+echo "CPU Usage: $CPU_USAGE%"
+
+echo ""
+
+# Memory Usage
+echo "Memory Usage:"
+MEMORY_USAGE=$(free -h | grep Mem | awk '{print "Used: " $3 " / Total: " $2}')
+echo "$MEMORY_USAGE"
+
+echo ""
+
+# Disk Usage
+echo "Disk Usage:"
+DISK_USAGE=$(df -h | grep -E '^/dev/|tmpfs')
+echo "$DISK_USAGE"
+
+echo ""
+
+# System Uptime
+echo "System Uptime:"
+UPTIME=$(uptime -p)
+echo "$UPTIME"
+
+echo ""
+
+# Top 10 Running Processes by Memory Usage
+echo "Top 10 Processes by Memory Usage:"
+TOP_PROCESSES=$(ps aux --sort=-%mem | head -n 10)
+echo "$TOP_PROCESSES"
+
+echo ""
+
+# Checking for System Errors (optional)
+echo "Checking for system errors in the last 24 hours:"
+ERROR_LOGS=$(journalctl --since "24 hours ago" -p err)
+echo "$ERROR_LOGS"
+
+echo "===================================="
+echo "End of System Health Check Report"
+echo "===================================="
